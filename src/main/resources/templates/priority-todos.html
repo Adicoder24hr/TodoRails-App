@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priority Todos | TodoRails</title>
+    <link th:href="@{/css/output.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://unpkg.com/alpinejs" defer></script>
+</head>
+
+<body class="h-screen w-screen bg-gray-100" x-data="{ sidebarOpen: false }" @close-sidebar.window="sidebarOpen = false">
+
+  <!-- ✅ Sidebar for mobile and tablet (slide-in) -->
+  <div 
+    x-show="sidebarOpen"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="-translate-x-full opacity-0"
+    x-transition:enter-end="translate-x-0 opacity-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="translate-x-0 opacity-100"
+    x-transition:leave-end="-translate-x-full opacity-0"
+    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+  </div>
+
+  <!-- ✅ Overlay -->
+  <div x-show="sidebarOpen" @click="sidebarOpen = false"
+       class="fixed inset-0 bg-black bg-opacity-30 z-40 lg:hidden"></div>
+
+  <!-- ✅ Topbar for Mobile and Tablet -->
+  <header class="lg:hidden flex items-center justify-between bg-white shadow px-4 py-3">
+    <button @click="sidebarOpen = true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <h1 class="text-lg font-semibold text-gray-700">TodoRails</h1>
+    <div></div>
+  </header>
+
+  <!-- ✅ Main container -->
+  <main class="flex min-h-screen">
+
+    <!-- Sidebar for Desktop -->
+    <div class="hidden lg:block fixed top-0 left-0 h-full w-64 z-40">
+      <div th:replace="fragments/sidebar :: sidebar"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 lg:ml-64 p-6 overflow-y-auto">
+    <h1 class="text-2xl font-bold mb-6"
+        th:text="${currentPage == 'HIGH' ? 'High Priority Todos' : (currentPage == 'MEDIUM' ? 'Medium Priority Todos' : 'Low Priority Todos')}">
+        Todos by Priority
+    </h1>
+
+
+      <div th:if="${#lists.isEmpty(todos)}" class="text-center text-gray-500 italic">
+          No todos available for this priority.
+      </div>
+
+      <!-- Todos Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12 lg:pb-0">
+          <div th:each="todo : ${todos}"
+              class="todo-item relative border border-gray-300 rounded-lg p-6 shadow-md bg-white transition"
+              th:attr="data-id=${todo.id}">
+
+              <!-- Colored bar based on priority -->
+              <div class="absolute top-0 left-0 w-2 h-full rounded-l-lg"
+                   th:classappend="${todo.priority.name() == 'HIGH'} ? 'bg-red-500' :
+                                    (${todo.priority.name() == 'MEDIUM'} ? 'bg-yellow-500' : 'bg-green-500')">
+              </div>
+
+              <div class="ml-3">
+                  <h2 class="text-xl font-bold mb-2 text-gray-800" th:text="${todo.title}">Todo Title</h2>
+                  <p class="text-gray-700 mb-2" th:text="${todo.description}">Todo description</p>
+                  <p class="text-sm text-gray-500 mb-2"
+                      th:text="'Due: ' + ${#temporals.format(todo.dueDate, 'dd MMM yyyy HH:mm')}">Due Date</p>
+              </div>
+
+              <div class="mt-4 flex justify-between items-center">
+                  <!-- Toggle Complete via AJAX -->
+                  <button type="button" th:onclick="'toggleTodoAjax(' + ${todo.id} + ')'"
+                      class="px-3 py-1 rounded-lg text-sm font-semibold bg-blue-500 text-white hover:bg-blue-600 transition">
+                      <span th:text="${todo.completed} ? 'Mark as Active' : 'Mark as Completed'">Mark as
+                          Completed</span>
+                  </button>
+
+                  <!-- Edit -->
+                  <div class="flex">
+                      <a th:href="@{/todos/edit/{id}(id=${todo.id})}"
+                          class="bg-gray-700 text-white text-sm px-3 py-1 rounded hover:bg-gray-900">Edit</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ✅ Bottom Navbar for Mobile and Tablet -->
+  <div class="fixed bottom-0 left-0 w-full bg-white shadow-inner border-t border-gray-200 z-40 lg:hidden">
+    <div th:replace="fragments/mobile-nav :: mobileNav"></div>
+  </div>
+
+  <!-- JS -->
+  <script th:inline="javascript">
+    const csrfToken = /*[[${_csrf.token}]]*/ '';
+
+    function toggleTodoAjax(todoId) {
+        fetch('/todos/toggle-ajax/' + todoId, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(updatedTodo => {
+                const el = document.querySelector(`.todo-item[data-id="${updatedTodo.id}"]`);
+                if (el) el.remove();
+                alert('✅ Todo marked as completed and moved to History page.');
+            })
+            .catch(err => console.error(err));
+    }
+  </script>
+</body>
+
+</html>

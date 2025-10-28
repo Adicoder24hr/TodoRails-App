@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | TodoRails</title>
+    <link th:href="@{/css/output.css}" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+<div class="bg-white shadow-lg rounded-lg w-full max-w-md sm:max-w-sm md:max-w-md p-6 sm:p-8">
+    <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Login</h2>
+
+    <!-- Error / Logout messages -->
+    <p th:if="${param.error}" class="text-red-500 mb-4 text-center font-medium">
+        Invalid username or password!
+    </p>
+    <p th:if="${param.logout}" class="text-green-500 mb-4 text-center font-medium">
+        You have been logged out.
+    </p>
+
+    <!-- Login Form -->
+    <form th:action="@{/login}" method="post" class="space-y-4 sm:space-y-5">
+
+        <!-- Username -->
+        <div>
+            <label for="username" class="block text-gray-700 font-medium mb-1">Username</label>
+            <input type="text" name="username" id="username" required
+                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-200">
+        </div>
+
+        <!-- Password with eye button -->
+        <div class="relative">
+            <label for="password" class="block text-gray-700 font-medium mb-1">Password</label>
+            <input type="password" name="password" id="password" required
+                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-200 pr-10">
+
+            <!-- Eye toggle button -->
+            <button type="button" id="togglePassword"
+                    class="absolute top-[2.2rem] right-2 flex items-center px-2 text-gray-500 hover:text-gray-700">
+                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Submit button -->
+        <div>
+            <button type="submit"
+                    class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-200">
+                Login
+            </button>
+        </div>
+    </form>
+
+    <!-- Register link -->
+    <p class="text-center mt-6 text-gray-600 text-sm sm:text-base">
+        New user? <a th:href="@{/register}" class="text-indigo-600 font-medium hover:underline">Register here</a>
+    </p>
+</div>
+
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    togglePassword.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+
+        // Toggle eye icon
+        eyeIcon.innerHTML = type === 'password'
+            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>'
+            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 012.621-3.978M6.5 6.5l11 11M17.5 17.5L6.5 6.5"/>';
+    });
+</script>
+
+</body>
+</html>

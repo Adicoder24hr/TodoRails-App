@@ -1,0 +1,69 @@
+<!-- src/main/resources/templates/fragments/sidebar.html -->
+<aside th:fragment="sidebar">
+    <div class="flex flex-col justify-between h-screen w-64 text-black bg-white border-r border-gray-300 shadow-lg">
+        <div class="flex flex-col grow">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-gray-300">
+                <h2 class="text-2xl font-bold">TodoRails</h2>
+                <button @click="$dispatch('close-sidebar')" class="lg:hidden text-gray-600 hover:text-gray-900">
+                    ✕
+                </button>
+            </div>
+
+            <nav class="mt-6 flex flex-col items-center text-base space-y-2">
+                <a th:href="@{/todos}"
+                   th:classappend="${currentPage == 'DASHBOARD'} ? 'bg-blue-700 text-white' : ''"
+                   class="block w-[90%] px-3 py-2 hover:bg-blue-700 hover:text-white rounded font-semibold transition-all border-b border-gray-300">
+                    Dashboard
+                </a>
+
+                <a th:href="@{/todos/add}"
+                   th:classappend="${currentPage == 'ADD'} ? 'bg-blue-700 text-white' : ''"
+                   class="block w-[90%] px-3 py-2 hover:bg-blue-700 hover:text-white rounded font-semibold transition-all border-b border-gray-300">
+                    Add Todo
+                </a>
+
+                <div x-data="{ open: false }" class="w-[90%] hidden lg:block border-b border-gray-300">
+                    <button @click="open = !open"
+                            class="w-full flex justify-between items-center py-2 px-3 hover:bg-blue-700 hover:text-white rounded font-semibold">
+                        Todos
+                        <svg :class="{'rotate-180': open}" class="w-4 h-4 transform transition-transform"
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div x-show="open" x-transition class="pl-4 mt-2 flex flex-col space-y-1">
+                        <a th:href="@{/todos/high}"
+                           th:classappend="${currentPage == 'HIGH'} ? 'bg-red-500 text-white' : ''"
+                           class="block py-1 hover:bg-red-500 hover:text-white px-4 rounded font-semibold">High</a>
+                        <a th:href="@{/todos/medium}"
+                           th:classappend="${currentPage == 'MEDIUM'} ? 'bg-yellow-500 text-white' : ''"
+                           class="block py-1 hover:bg-yellow-500 hover:text-white px-4 rounded font-semibold">Medium</a>
+                        <a th:href="@{/todos/low}"
+                           th:classappend="${currentPage == 'LOW'} ? 'bg-green-500 text-white' : ''"
+                           class="block py-1 hover:bg-green-500 hover:text-white px-4 rounded font-semibold">Low</a>
+                    </div>
+                </div>
+
+                <a th:href="@{/settings}"
+                   th:classappend="${currentPage == 'SETTINGS'} ? 'bg-blue-700 text-white' : ''"
+                   class="block w-[90%] px-3 py-2 hover:bg-blue-700 hover:text-white rounded font-semibold transition-all border-b border-gray-300">
+                    Settings
+                </a>
+
+                <a th:href="@{/todos/history}"
+                   th:classappend="${currentPage == 'HISTORY'} ? 'bg-blue-700 text-white' : ''"
+                   class="block w-[90%] px-3 py-2 hover:bg-blue-700 hover:text-white rounded font-semibold transition-all border-b border-gray-300">
+                    History
+                </a>
+            </nav>
+        </div>
+
+        <div class="px-6 py-4 border-t border-gray-300 bg-gray-50">
+            <p class="font-semibold mb-2" th:text="${#authentication.principal.username}">Username</p>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded">Logout</button>
+            </form>
+        </div>
+    </div>
+</aside>

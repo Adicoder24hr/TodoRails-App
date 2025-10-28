@@ -1,0 +1,29 @@
+<div th:fragment="topbar">
+  <header class="bg-white shadow flex justify-center lg:justify-end px-6 py-4">
+    <div class="flex items-center space-x-3">
+
+      <!-- Avatar container -->
+      <div class="h-10 w-10 rounded-full overflow-hidden bg-indigo-100 flex items-center justify-center shadow-sm relative">
+
+        <!-- Default avatar (always shown as base layer with username's first letter) -->
+        <div class="h-full w-full bg-indigo-100 flex items-center justify-center absolute inset-0">
+          <span th:text="${user != null ? user.username.substring(0,1) : '?'}"
+                class="font-semibold text-indigo-700 text-lg uppercase"></span>
+        </div>
+
+        <!-- Profile picture overlay (conditionally shown if path exists) -->
+        <img th:if="${user != null and user.profilePicturePath != null}"
+             th:src="@{${user.profilePicturePath}(t=${timestamp})}"
+             alt="Profile"
+             class="h-full w-full object-cover absolute inset-0"
+             onerror="this.style.display='none';">
+
+      </div>
+
+      <!-- Display username or 'Unknown' -->
+      <span th:text="${user != null ? user.username : 'Unknown'}"
+            class="font-medium text-gray-700"></span>
+
+    </div>
+  </header>
+</div>

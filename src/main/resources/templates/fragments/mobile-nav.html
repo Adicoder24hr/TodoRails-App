@@ -1,0 +1,33 @@
+<!-- src/main/resources/templates/fragments/mobile-nav.html -->
+<div th:fragment="mobileNav">
+  <nav class="flex justify-around items-center py-2 bg-white border-t border-gray-200 shadow-md">
+    
+    <a th:href="@{/todos/high}" 
+       class="flex flex-col items-center text-gray-700 hover:text-red-600"
+       th:classappend="${currentPage == 'HIGH'} ? 'text-red-600' : ''">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18m-7 5h7"/>
+      </svg>
+      <span class="text-xs font-medium">High</span>
+    </a>
+
+    <a th:href="@{/todos/medium}" 
+       class="flex flex-col items-center text-gray-700 hover:text-yellow-500"
+       th:classappend="${currentPage == 'MEDIUM'} ? 'text-yellow-500' : ''">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18m-7 5h7"/>
+      </svg>
+      <span class="text-xs font-medium">Medium</span>
+    </a>
+
+    <a th:href="@{/todos/low}" 
+       class="flex flex-col items-center text-gray-700 hover:text-green-600"
+       th:classappend="${currentPage == 'LOW'} ? 'text-green-600' : ''">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18m-7 5h7"/>
+      </svg>
+      <span class="text-xs font-medium">Low</span>
+    </a>
+
+  </nav>
+</div>

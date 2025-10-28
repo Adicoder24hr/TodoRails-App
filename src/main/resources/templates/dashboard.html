@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TodoRails | Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/alpinejs" defer></script>
+  <link th:href="@{/css/output.css}" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 flex flex-col h-screen poppins" x-data="{ sidebarOpen: false }" @close-sidebar.window="sidebarOpen = false">
+  
+  <!-- ✅ Sidebar for mobile and tablet (slide-in) -->
+  <div 
+    x-show="sidebarOpen"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="-translate-x-full opacity-0"
+    x-transition:enter-end="translate-x-0 opacity-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="translate-x-0 opacity-100"
+    x-transition:leave-end="-translate-x-full opacity-0"
+    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+  </div>
+
+  <!-- ✅ Overlay -->
+  <div x-show="sidebarOpen" @click="sidebarOpen = false"
+       class="fixed inset-0 bg-black bg-opacity-30 z-40 lg:hidden"></div>
+
+  <!-- ✅ Topbar for Mobile and Tablet -->
+  <header class="lg:hidden flex items-center justify-between bg-white shadow px-4 py-3">
+    <button @click="sidebarOpen = true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <h1 class="text-lg font-semibold text-gray-700">TodoRails</h1>
+    <div></div>
+  </header>
+
+  <!-- ✅ Sidebar for Desktop -->
+  <div class="hidden lg:block fixed top-0 left-0 h-full w-64 z-40">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+  </div>
+
+  <!-- ✅ Main content -->
+  <div class="flex-1 flex flex-col lg:ml-64">
+    <div th:replace="fragments/topbar :: topbar"></div>
+
+    <main class="p-6 overflow-y-auto h-full flex flex-col gap-[3rem]">
+      <!-- Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white border border-gray-300 p-10 rounded-lg shadow text-center">
+          <h2 class="text-lg font-semibold">Total Todos</h2>
+          <p class="text-3xl font-bold text-blue-600" th:text="${todos.size()}">0</p>
+        </div>
+        <div class="bg-white border border-gray-300 p-10 rounded-lg shadow text-center">
+          <h2 class="text-lg font-semibold">Complete</h2>
+          <p class="text-3xl font-bold text-blue-600"
+             th:text="${highTodos.?[completed].size() + mediumTodos.?[completed].size() + lowTodos.?[completed].size()}">0</p>
+        </div>
+        <div class="bg-white border border-gray-300 p-10 rounded-lg shadow text-center">
+          <h2 class="text-lg font-semibold">Active</h2>
+          <p class="text-3xl font-bold text-blue-600"
+             th:text="${todos.size() - (highTodos.?[completed].size() + mediumTodos.?[completed].size() + lowTodos.?[completed].size())}">0</p>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4 pb-20 lg:pb-0">
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-300">
+          <h2 class="text-lg font-semibold mb-4">Todos by Priority</h2>
+          <canvas id="priorityChart" class="w-full h-56"></canvas>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow border border-gray-300">
+          <h2 class="text-lg font-semibold mb-4">Completion Rate</h2>
+          <canvas id="completionChart" class="w-full h-56"></canvas>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ✅ Bottom Navbar -->
+  <div class="fixed bottom-0 left-0 w-full bg-white shadow-inner border-t border-gray-200 z-40 lg:hidden">
+    <div th:replace="fragments/mobile-nav :: mobileNav"></div>
+  </div>
+
+  <!-- ✅ Chart.js Scripts -->
+  <script th:inline="javascript">
+    const priorityCtx = document.getElementById('priorityChart');
+    new Chart(priorityCtx, {
+      type: 'pie',
+      data: {
+        labels: ['High','Medium','Low'],
+        datasets: [{
+          data:[
+            [[${highTodos.size()}]],
+            [[${mediumTodos.size()}]],
+            [[${lowTodos.size()}]],
+          ],
+          backgroundColor: ['#ef4444','#f59e0b','#10b981']
+        }]
+      }
+    });
+    const completionChart = document.getElementById('completionChart');
+    new Chart(completionChart, {
+      type: 'doughnut',
+      data: {
+        labels: ['Completed', 'Active'],
+        datasets: [{
+          data:[
+            [[${highTodos.?[completed].size() + mediumTodos.?[completed].size() + lowTodos.?[completed].size()}]],
+            [[${todos.size() - (highTodos.?[completed].size() + mediumTodos.?[completed].size() + lowTodos.?[completed].size())}]]
+          ],
+          backgroundColor: ['#22c55e','#facc15']
+        }]
+      }
+    });
+  </script>
+</body>
+</html>
