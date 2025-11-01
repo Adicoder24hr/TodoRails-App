@@ -1,9 +1,9 @@
 <div th:fragment="topbar">
   <header class="bg-white shadow flex justify-center lg:justify-end px-6 py-4">
-    <div class="flex items-center space-x-3">
+    <div class="flex items-center space-x-3 flex-col md:flex-col lg:flex-row">
 
       <!-- Avatar container -->
-      <div class="h-10 w-10 rounded-full overflow-hidden bg-indigo-100 flex items-center justify-center shadow-sm relative">
+      <div class="h-10 w-10 md:h-20 md:w-20 lg:h-10 lg:w-10 mr-0 lg:mr-2 rounded-full overflow-hidden bg-indigo-100 flex items-center justify-center shadow-sm relative">
 
         <!-- Default avatar (always shown as base layer with username's first letter) -->
         <div class="h-full w-full bg-indigo-100 flex items-center justify-center absolute inset-0">
@@ -22,7 +22,7 @@
 
       <!-- Display username or 'Unknown' -->
       <span th:text="${user != null ? user.username : 'Unknown'}"
-            class="font-medium text-gray-700"></span>
+            class="font-medium text-gray-700 text-base md:text-2xl lg:text-base"></span>
 
     </div>
   </header>

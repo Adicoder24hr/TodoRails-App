@@ -20,7 +20,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="translate-x-0 opacity-100"
     x-transition:leave-end="-translate-x-full opacity-0"
-    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
+    class="fixed inset-y-0 left-0 w-64 md:w-80 lg:w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
     <div th:replace="fragments/sidebar :: sidebar"></div>
   </div>
 
@@ -30,14 +30,14 @@
 
   <!-- ✅ Topbar for Mobile and Tablet -->
   <header class="lg:hidden flex items-center justify-between bg-white shadow px-4 py-3">
-    <button @click="sidebarOpen = true">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+    <button @click="sidebarOpen = true" class="md:h-10 md:w-10">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:w-full md:h-full text-gray-700" fill="none" viewBox="0 0 24 24"
            stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
     </button>
-    <h1 class="text-lg font-semibold text-gray-700">TodoRails</h1>
+    <h1 class="text-lg font-semibold text-gray-700 md:text-3xl lg:text-lg">TodoRails</h1>
     <div></div>
   </header>
 
@@ -53,18 +53,18 @@
     <main class="p-6 overflow-y-auto h-full flex flex-col gap-[3rem]">
       <!-- Cards -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="bg-white border border-gray-300 p-10 rounded-lg shadow text-center">
-          <h2 class="text-lg font-semibold">Total Todos</h2>
-          <p class="text-3xl font-bold text-blue-600" th:text="${todos.size()}">0</p>
+        <div class="bg-white border flex flex-col gap-2.5 border-gray-300 p-10 rounded-lg shadow text-center md:py-20 lg:py-10 lg:px-10">
+          <h2 class="text-lg font-semibold md:text-3xl lg:text-lg">Total Todos</h2>
+          <p class="text-3xl font-bold text-blue-600 md:text-4xl lg:text-3xl" th:text="${todos.size()}">0</p>
         </div>
-        <div class="bg-white border border-gray-300 p-10 rounded-lg shadow text-center">
-          <h2 class="text-lg font-semibold">Complete</h2>
-          <p class="text-3xl font-bold text-blue-600"
+        <div class="bg-white border flex flex-col gap-2.5 border-gray-300 p-10 rounded-lg shadow text-center md:py-20 lg:py-10 lg:px-10">
+          <h2 class="text-lg font-semibold md:text-3xl lg:text-lg">Complete</h2>
+          <p class="text-3xl font-bold text-blue-600 md:text-4xl lg:text-3xl"
              th:text="${highTodos.?[completed].size() + mediumTodos.?[completed].size() + lowTodos.?[completed].size()}">0</p>
         </div>
-        <div class="bg-white border border-gray-300 p-10 rounded-lg shadow text-center">
-          <h2 class="text-lg font-semibold">Active</h2>
-          <p class="text-3xl font-bold text-blue-600"
+        <div class="bg-white border flex flex-col gap-2.5 border-gray-300 p-10 rounded-lg shadow text-center md:py-20 lg:py-10 lg:px-10">
+          <h2 class="text-lg font-semibold md:text-3xl lg:text-lg">Active</h2>
+          <p class="text-3xl font-bold text-blue-600 md:text-4xl lg:text-3xl"
              th:text="${todos.size() - (highTodos.?[completed].size() + mediumTodos.?[completed].size() + lowTodos.?[completed].size())}">0</p>
         </div>
       </div>
@@ -72,11 +72,11 @@
       <!-- Charts -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4 pb-20 lg:pb-0">
         <div class="bg-white p-6 rounded-lg shadow border border-gray-300">
-          <h2 class="text-lg font-semibold mb-4">Todos by Priority</h2>
+          <h2 class="text-lg font-semibold mb-4 md:mb-8 lg:mb-4 md:text-3xl lg:text-lg">Todos by Priority</h2>
           <canvas id="priorityChart" class="w-full h-56"></canvas>
         </div>
         <div class="bg-white p-6 rounded-lg shadow border border-gray-300">
-          <h2 class="text-lg font-semibold mb-4">Completion Rate</h2>
+          <h2 class="text-lg font-semibold mb-4 md:mb-8 lg:mb-4 md:text-3xl lg:text-lg">Completion Rate</h2>
           <canvas id="completionChart" class="w-full h-56"></canvas>
         </div>
       </div>

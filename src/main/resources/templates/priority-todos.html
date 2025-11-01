@@ -21,7 +21,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="translate-x-0 opacity-100"
     x-transition:leave-end="-translate-x-full opacity-0"
-    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
+    class="fixed inset-y-0 left-0 w-64 md:w-80 lg:w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
     <div th:replace="fragments/sidebar :: sidebar"></div>
   </div>
 
@@ -31,14 +31,14 @@
 
   <!-- ✅ Topbar for Mobile and Tablet -->
   <header class="lg:hidden flex items-center justify-between bg-white shadow px-4 py-3">
-    <button @click="sidebarOpen = true">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+    <button @click="sidebarOpen = true" class="md:h-10 md:w-10">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:w-full md:h-full text-gray-700" fill="none" viewBox="0 0 24 24"
            stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
     </button>
-    <h1 class="text-lg font-semibold text-gray-700">TodoRails</h1>
+    <h1 class="text-lg font-semibold text-gray-700 md:text-3xl lg:text-lg">TodoRails</h1>
     <div></div>
   </header>
 
@@ -52,7 +52,7 @@
 
     <!-- Main Content -->
     <div class="flex-1 lg:ml-64 p-6 overflow-y-auto">
-    <h1 class="text-2xl font-bold mb-6"
+    <h1 class="text-2xl font-bold mb-6 md:text-3xl lg:text-2xl"
         th:text="${currentPage == 'HIGH' ? 'High Priority Todos' : (currentPage == 'MEDIUM' ? 'Medium Priority Todos' : 'Low Priority Todos')}">
         Todos by Priority
     </h1>
@@ -75,16 +75,16 @@
               </div>
 
               <div class="ml-3">
-                  <h2 class="text-xl font-bold mb-2 text-gray-800" th:text="${todo.title}">Todo Title</h2>
-                  <p class="text-gray-700 mb-2" th:text="${todo.description}">Todo description</p>
-                  <p class="text-sm text-gray-500 mb-2"
+                  <h2 class="text-xl font-bold mb-2 text-gray-800 md:text-2xl lg:text-xl" th:text="${todo.title}">Todo Title</h2>
+                  <p class="text-gray-700 mb-2 text-base md:text-lg lg:text-base" th:text="${todo.description}">Todo description</p>
+                  <p class="text-sm text-gray-500 mb-2 text-base md:text-lg lg:text-base"
                       th:text="'Due: ' + ${#temporals.format(todo.dueDate, 'dd MMM yyyy HH:mm')}">Due Date</p>
               </div>
 
               <div class="mt-4 flex justify-between items-center">
                   <!-- Toggle Complete via AJAX -->
                   <button type="button" th:onclick="'toggleTodoAjax(' + ${todo.id} + ')'"
-                      class="px-3 py-1 rounded-lg text-sm font-semibold bg-blue-500 text-white hover:bg-blue-600 transition">
+                      class="px-3 py-1 md:px-4 md:py-2 lg:px-3 lg:py-1 rounded-lg text-sm font-semibold bg-blue-500 text-white hover:bg-blue-600 transition md:text-base lg:text-sm">
                       <span th:text="${todo.completed} ? 'Mark as Active' : 'Mark as Completed'">Mark as
                           Completed</span>
                   </button>
@@ -92,7 +92,7 @@
                   <!-- Edit -->
                   <div class="flex">
                       <a th:href="@{/todos/edit/{id}(id=${todo.id})}"
-                          class="bg-gray-700 text-white text-sm px-3 py-1 rounded hover:bg-gray-900">Edit</a>
+                          class="bg-gray-700 text-white text-sm px-3 py-1 md:px-4 md:py-2 lg:px-3 lg:py-1 rounded hover:bg-gray-900 md:text-base lg:text-sm">Edit</a>
                   </div>
               </div>
           </div>

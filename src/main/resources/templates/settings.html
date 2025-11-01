@@ -37,7 +37,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="translate-x-0 opacity-100"
     x-transition:leave-end="-translate-x-full opacity-0"
-    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
+    class="fixed inset-y-0 left-0 w-64 md:w-80 lg:w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
     <div th:replace="fragments/sidebar :: sidebar"></div>
   </div>
 
@@ -47,14 +47,14 @@
 
   <!-- Topbar for mobile and tablet -->
   <header class="lg:hidden flex items-center justify-between bg-white shadow px-4 py-3">
-    <button @click="sidebarOpen = true">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+    <button @click="sidebarOpen = true" class="md:h-10 md:w-10">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:w-full md:h-full text-gray-700" fill="none" viewBox="0 0 24 24"
            stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
     </button>
-    <h1 class="text-lg font-semibold text-gray-700">TodoRails</h1>
+    <h1 class="text-lg font-semibold text-gray-700 md:text-3xl lg:text-lg">TodoRails</h1>
     <div></div>
   </header>
 
@@ -67,8 +67,8 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 lg:ml-64 p-8 overflow-y-auto pb-20 lg:pb-0">
-        <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
+    <div class="flex-1 lg:ml-64 p-8 overflow-y-auto pb-20 lg:pb-0 md:flex lg:flex-1 lg:items-start md:justify-between md:items-center">
+        <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-200 md:h-fit md:w-[90%] lg:max-w-3xl">
 
             <!-- Header -->
             <div class="flex items-center justify-between mb-6">
@@ -76,7 +76,7 @@
                     ⚙️ Settings
                 </h1>
                 <a th:href="@{/todos}"
-                   class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                   class="text-indigo-600 hover:text-indigo-800 text-sm font-medium md:text-xl lg:text-sm">
                     ← Back to Dashboard
                 </a>
             </div>
@@ -89,7 +89,7 @@
 
             <!-- Settings Form -->
             <form th:action="@{/settings/updateProfile}" method="post" enctype="multipart/form-data"
-                  class="space-y-6">
+                  class="space-y-6 flex flex-col gap-5">
 
                 <!-- Profile Picture Section -->
                 <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
@@ -125,43 +125,46 @@
                     </div>
 
                     <div>
-                        <label class="block text-gray-600 font-medium mb-2">Upload New Picture</label>
+                        <label class="block text-gray-600 font-medium mb-2 text-base md:text-2xl lg:text-base">Upload New Picture</label>
                         <input type="file" id="profilePicture" name="profilePicture" accept="image/*"
                                onchange="previewImage(event)"
-                               class="text-sm text-gray-600 focus:outline-none">
-                        <p class="text-xs text-gray-400 mt-1">PNG, JPG up to 2MB.</p>
+                               class="text-sm text-gray-600 focus:outline-none md:text-lg lg:text-sm">
+                        <p class="text-xs text-gray-400 mt-1 md:text-lg lg:text-xs">PNG, JPG up to 2MB.</p>
                     </div>
                 </div>
 
                 <!-- Username -->
                 <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Username</label>
+                    <label class="block text-gray-700 font-semibold mb-2 text-base md:text-2xl lg:text-base">Username</label>
                     <input type="text" name="username"
                            th:value="${user != null ? user.username : ''}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none shadow-sm">
+                           class="w-full px-3 py-2 md:py-4 md:px-8 lg:py-2 lg:px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none shadow-sm
+                           md:placeholder:text-2xl lg:placeholder:text-base placeholder:text-base md:text-2xl text-base lg:text-base">
                 </div>
 
                 <!-- Password Fields -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-gray-700 font-semibold mb-2">New Password</label>
+                        <label class="block text-gray-700 font-semibold mb-2 text-base md:text-2xl lg:text-base">New Password</label>
                         <input type="password" name="password"
                                placeholder="Enter new password"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none shadow-sm">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none shadow-sm
+                               md:placeholder:text-2xl lg:placeholder:text-base placeholder:text-base md:text-2xl text-base lg:text-base">
                     </div>
 
                     <div>
-                        <label class="block text-gray-700 font-semibold mb-2">Confirm Password</label>
+                        <label class="block text-gray-700 font-semibold mb-2 text-base md:text-2xl lg:text-base">Confirm Password</label>
                         <input type="password" name="confirmPassword"
                                placeholder="Confirm new password"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none shadow-sm">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none shadow-sm
+                               md:placeholder:text-2xl lg:placeholder:text-base placeholder:text-base md:text-2xl text-base lg:text-base">
                     </div>
                 </div>
 
                 <!-- Save Button -->
                 <div class="flex justify-center pt-4">
                     <button type="submit"
-                            class="bg-indigo-600 text-white px-8 py-2.5 rounded-lg shadow hover:bg-indigo-700 transition duration-200">
+                            class="bg-indigo-600 text-white px-8 py-2.5 rounded-lg shadow hover:bg-indigo-700 transition duration-200 text-base md:text-2xl lg:text-base py-2 px-4 md:py-4 md:px-8 lg:py-2 lg:px-4">
                         💾 Save Changes
                     </button>
                 </div>

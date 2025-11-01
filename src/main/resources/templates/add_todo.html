@@ -18,7 +18,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="translate-x-0 opacity-100"
     x-transition:leave-end="-translate-x-full opacity-0"
-    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
+    class="fixed inset-y-0 left-0 w-64 md:w-80 lg:w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
     <div th:replace="fragments/sidebar :: sidebar"></div>
 </div>
 
@@ -28,14 +28,14 @@
 
 <!-- Topbar for mobile and tablet -->
 <header class="lg:hidden flex items-center justify-between bg-white shadow px-4 py-3">
-    <button @click="sidebarOpen = true">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+    <button @click="sidebarOpen = true" class="md:h-10 md:w-10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:w-full md:h-full text-gray-700" fill="none" viewBox="0 0 24 24"
              stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
     </button>
-    <h1 class="text-lg font-semibold text-gray-700">TodoRails</h1>
+    <h1 class="text-lg font-semibold text-gray-700 md:text-3xl lg:text-lg">TodoRails</h1>
     <div></div>
 </header>
 
@@ -49,43 +49,45 @@
 
     <!-- Main Content -->
     <div class="flex-1 lg:ml-64 flex items-center justify-center p-4 md:p-6 pb-20 lg:pb-0">
-        <div class="bg-white p-4 md:p-8 rounded-2xl shadow-md w-full max-w-full md:max-w-md">
+        <div class="bg-white p-4 md:p-8 rounded-2xl shadow-md w-full max-w-full md:max-w-xl lg:max-w-md">
 
-            <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Add New Todo</h1>
+            <h1 class="text-2xl font-bold mb-6 text-center text-gray-800 md:text-3xl lg:text-2xl">Add New Todo</h1>
 
             <form th:action="@{/todos/add}" th:object="${newTodo}" method="post" class="space-y-4">
 
                 <!-- Title -->
                 <div>
-                    <label class="block font-semibold mb-1 text-gray-700">Title</label>
+                    <label class="block font-semibold mb-1 text-gray-700 text-base lg:text-base md:text-2xl">Title</label>
                     <input type="text" th:field="*{title}" placeholder="Enter todo title"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-900 font-medium placeholder-gray-500" required>
+                           class="w-full px-4 py-2 md:py-4 md:px-8 lg:py-2 lg:px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-900 font-medium placeholder-gray-500 
+                           md:placeholder:text-2xl lg:placeholder:text-base placeholder:text-base md:text-2xl text-base lg:text-base" required>
                 </div>
 
                 <!-- Description -->
                 <div>
-                    <label class="block font-semibold mb-1 text-gray-700">Description</label>
+                    <label class="block font-semibold mb-1 text-gray-700 text-base lg:text-base md:text-2xl">Description</label>
                     <textarea th:field="*{description}" rows="3" placeholder="Enter description"
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-900 font-medium placeholder-gray-500"></textarea>
+                              class="w-full px-4 py-2 md:py-4 md:px-8 lg:py-2 lg:px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-900 font-medium placeholder-gray-500
+                              md:placeholder:text-2xl lg:placeholder:text-base placeholder:text-base md:text-2xl text-base lg:text-base"></textarea>
                 </div>
 
                 <!-- Due Date -->
                 <div>
-                    <label class="block font-semibold mb-1 text-gray-700">Due Date & Time</label>
+                    <label class="block font-semibold mb-1 text-gray-700 text-base lg:text-base md:text-2xl">Due Date & Time</label>
                     <input type="datetime-local" th:field="*{dueDate}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                           class="w-full px-4 py-2 md:py-4 md:px-8 lg:py-2 lg:px-4 border text-base md:text-2xl lg:text-base font-medium text-gray-500 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
                 </div>
 
                 <!-- Priority (Custom Dropdown) -->
                 <div x-data="priorityDropdown" class="relative mb-4 w-full font-semibold">
-                    <label for="priority" class="block font-semibold mb-1 text-gray-700">Priority</label>
+                    <label for="priority" class="block font-semibold mb-1 text-gray-700 text-base lg:text-base md:text-2xl">Priority</label>
 
                     <!-- Hidden input for backend form submission -->
                     <input type="hidden" name="priority" th:field="*{priority}" x-model="selected">
 
                     <!-- Button to open dropdown -->
                     <button type="button" @click="open = !open"
-                        class="w-full flex justify-between items-center border border-gray-300 px-4 py-2 bg-white text-gray-800 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                        class="w-full flex justify-between items-center border border-gray-300 px-4 py-2 md:py-4 md:px-8 lg:py-2 lg:px-4 text-base md:text-2xl lg:text-base bg-white text-gray-800 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
                         <span x-text="selected || 'Select Priority'"></span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600 transform transition-transform duration-200"
                             :class="open ? 'rotate-180' : 'rotate-0'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -99,7 +101,7 @@
                         <template x-for="option in options" :key="option">
                             <div 
                                 @click="selected = option; open = false"
-                                class="px-4 py-2 text-gray-700 font-bold hover:bg-blue-50 cursor-pointer"
+                                class="px-4 py-2 text-gray-700 font-bold hover:bg-blue-50 cursor-pointer text-base md:text-xl lg:text-base"
                                 :class="selected === option ? 'bg-blue-100 text-blue-700' : ''"
                                 x-text="option">
                             </div>
@@ -108,23 +110,23 @@
                 </div>
 
                 <!-- Completed -->
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-2 my-6 md:gap-5 lg:gap-2 gap-2">
                     <input type="checkbox" th:field="*{completed}"
-                           class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-400">
-                    <label class="font-semibold text-gray-700">Mark as Completed</label>
+                           class="h-5 w-5 md:h-8 md:w-8 lg:h-6 lg:w-6 text-blue-600 border-gray-300 rounded focus:ring-blue-400">
+                    <label class="font-semibold text-gray-700 text-base md:text-2xl lg:text-base">Mark as Completed</label>
                 </div>
 
                 <!-- Submit -->
                 <div>
                     <button type="submit"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold transition duration-200">
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white text-base md:text-2xl lg:text-base py-2 px-4 md:py-4 md:px-8 lg:py-2 lg:px-4  rounded-lg font-semibold transition duration-200">
                         Save Todo
                     </button>
                 </div>
 
             </form>
 
-            <div class="mt-4 text-center">
+            <div class="mt-4 text-center text-base md:text-xl lg:text-base">
                 <a th:href="@{/todos}" class="text-blue-600 hover:underline font-semibold text-md">Back to Dashboard</a>
             </div>
 
