@@ -1533,6 +1533,11 @@
       }
     }
   }
+  .xl\:grid-cols-3 {
+    @media (width >= 80rem) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
 }
 body {
   font-family: Arial, sans-serif;

@@ -56,7 +56,7 @@
                 <h1 class="text-2xl font-bold md:text-3xl lg:text-2xl">Completed Todos</h1>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12 lg:pb-0 md:pb-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-12 lg:pb-0 md:pb-20">
                 <div th:each="todo : ${todos}"
                      th:id="'todo-card-' + ${todo.id}"
                      class="relative border border-gray-300 rounded-lg p-6 shadow-md bg-green-200 transition-colors duration-700">

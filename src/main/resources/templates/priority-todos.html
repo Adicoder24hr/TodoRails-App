@@ -64,7 +64,7 @@
       </div>
 
       <!-- Todos Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12 lg:pb-0">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-12 lg:pb-0">
           <div th:each="todo : ${todos}"
               class="todo-item relative border border-gray-300 rounded-lg p-6 shadow-md bg-white transition"
               th:attr="data-id=${todo.id}">
