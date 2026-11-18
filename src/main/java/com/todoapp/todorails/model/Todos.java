@@ -21,7 +21,9 @@ public class Todos {
 
     private LocalDateTime dueDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    private boolean reminderSent = false;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
@@ -79,5 +81,13 @@ public class Todos {
 
     public void setPriority(Priority priority){
         this.priority = priority;
+    }
+
+    public boolean isReminderSent() {
+        return reminderSent;
+    }
+
+    public void setReminderSent(boolean reminderSent) {
+        this.reminderSent = reminderSent;
     }
 }

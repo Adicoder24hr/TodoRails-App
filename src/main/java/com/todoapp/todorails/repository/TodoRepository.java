@@ -36,4 +36,6 @@ public interface TodoRepository extends JpaRepository<Todos, Long> {
 
     // Find todos between dates (for notifications)
     List<Todos> findAllByDueDateBetweenAndCompletedFalse(LocalDateTime start, LocalDateTime end);
+
+    List<Todos> findByDueDateLessThanEqualAndCompletedFalseAndReminderSentFalse(LocalDateTime dueBefore);
 }

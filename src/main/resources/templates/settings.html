@@ -39,7 +39,8 @@
     x-transition:leave-start="translate-x-0 opacity-100"
     x-transition:leave-end="-translate-x-full opacity-0"
     class="fixed inset-y-0 left-0 w-64 md:w-80 lg:w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
-    <div th:replace="fragments/sidebar :: sidebar"></div>
+    <div th:if="${#authorization.expression('isAuthenticated()')}"
+     th:replace="fragments/sidebar :: sidebar"></div>
   </div>
 
   <!-- Overlay -->
@@ -64,7 +65,8 @@
 
     <!-- Desktop Sidebar -->
     <div class="hidden lg:block fixed top-0 left-0 h-full w-64 z-40">
-      <div th:replace="fragments/sidebar :: sidebar"></div>
+      <div th:if="${#authorization.expression('isAuthenticated()')}"
+       th:replace="fragments/sidebar :: sidebar"></div>
     </div>
 
     <!-- Main Content -->
@@ -72,10 +74,11 @@
         <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-200 md:h-fit md:w-[90%] lg:max-w-3xl">
 
             <!-- Header -->
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center justify-between mb-6 flex-col md:flex-row md:gap-0 gap-4">
                 <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-2">
                     ⚙️ Settings
                 </h1>
+                <p class="text-sm text-gray-500 font-medium md:font-light italic">Made By Aditya Bhalerao</p>
             </div>
 
             <!-- Success Message -->
@@ -121,11 +124,13 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div class="m-auto md:m-0 w-36 md:w-fit">
                         <label class="block text-gray-600 font-medium mb-2 text-base md:text-2xl lg:text-base">Upload New Picture</label>
-                        <input type="file" id="profilePicture" name="profilePicture" accept="image/*"
-                               onchange="previewImage(event)"
-                               class="text-sm text-gray-600 focus:outline-none md:text-lg lg:text-sm">
+                        <div>
+                            <input type="file" id="profilePicture" name="profilePicture" accept="image/*"
+                                   onchange="previewImage(event)"
+                                   class="text-sm text-gray-600 focus:outline-none md:text-lg lg:text-sm">
+                        </div>
                         <p class="text-xs text-gray-400 mt-1 md:text-lg lg:text-xs">PNG, JPG up to 2MB.</p>
                     </div>
                 </div>

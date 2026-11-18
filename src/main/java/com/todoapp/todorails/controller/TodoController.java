@@ -5,20 +5,18 @@ import com.todoapp.todorails.model.Priority;
 import com.todoapp.todorails.model.Todos;
 import com.todoapp.todorails.model.User;
 import com.todoapp.todorails.repository.TodoRepository;
-import com.todoapp.todorails.repository.UserRepository;
 import com.todoapp.todorails.service.TodoService;
 import com.todoapp.todorails.service.UserService;
+import com.todoapp.todorails.util.TodoDateTimes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/todos")
@@ -31,16 +29,12 @@ public class TodoController {
     private TodoRepository todoRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private UserService userService;
 
     // Dashboard: All active todos
     @GetMapping
-    public String listTodos(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+    public String listTodos(Model model) {
+        User user = getAuthenticatedUser(model);
 
         // Fetch ALL todos (not just active)
         List<Todos> todos = todoRepository.findByUser(user);
@@ -50,7 +44,7 @@ public class TodoController {
         List<Todos> mediumTodos = todoRepository.findByUserAndPriority(user, Priority.MEDIUM);
         List<Todos> lowTodos = todoRepository.findByUserAndPriority(user, Priority.LOW);
 
-        model.addAttribute("user", user);
+        model.addAttribute("currentUser", user);
         model.addAttribute("todos", todos);
         model.addAttribute("highTodos", highTodos);
         model.addAttribute("mediumTodos", mediumTodos);
@@ -69,18 +63,22 @@ public class TodoController {
     }
 
     @PostMapping("/add")
-    public String addTodo(@AuthenticationPrincipal UserDetails userDetails, @ModelAttribute("newTodo") Todos todo){
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+    public String addTodo(@ModelAttribute("newTodo") Todos todo, Model model){
+        User user = getAuthenticatedUser(model);
         todoService.addTodoForUser(user, todo);
         return "redirect:/todos";
     }
 
     // Toggle Completed / Active (normal POST redirect)
     @PostMapping("/toggle/{id}")
-    public String toggleTodoStatus(@PathVariable Long id, @RequestParam(required = false) String from){
+    public String toggleTodoStatus(@PathVariable Long id,
+                                   @RequestParam(required = false) String from,
+                                   Model model){
         Todos todo = todoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Todo not found!"));
+        if (!belongsToUser(todo, getAuthenticatedUser(model))) {
+            return "redirect:/todos";
+        }
 
         todo.setCompleted(!todo.isCompleted());
         todoRepository.save(todo);
@@ -106,9 +104,12 @@ public class TodoController {
     // Toggle Completed / Active (AJAX)
     @PostMapping("/toggle-ajax/{id}")
     @ResponseBody
-    public ResponseEntity<TodoDTO> toggleTodoAjax(@PathVariable Long id){
+    public ResponseEntity<TodoDTO> toggleTodoAjax(@PathVariable Long id, Model model){
         Todos todo = todoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Todo not found!"));
+        if (!belongsToUser(todo, getAuthenticatedUser(model))) {
+            return ResponseEntity.notFound().build();
+        }
 
         // Toggle completed
         todo.setCompleted(!todo.isCompleted());
@@ -130,9 +131,8 @@ public class TodoController {
     // Delete Todo
     @PostMapping("/delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteTodo(@PathVariable Long id, Principal principal){
-        User user = userRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+    public ResponseEntity<?> deleteTodo(@PathVariable Long id, Model model){
+        User user = getAuthenticatedUser(model);
 
         boolean deleted = todoService.deleteTodoByIdAndUser(id, user);
         if(deleted){
@@ -144,25 +144,29 @@ public class TodoController {
 
     // Edit Todo
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model, @AuthenticationPrincipal UserDetails userDetails){
+    public String showEditForm(@PathVariable Long id, Model model){
         Todos todo = todoRepository.findById(id).orElseThrow();
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+        User user = getAuthenticatedUser(model);
 
         if(!todo.getUser().getId().equals(user.getId())){
             return "redirect:/todos";
         }
 
-        model.addAttribute("todo", todo);
+        Todos editForm = new Todos();
+        editForm.setId(todo.getId());
+        editForm.setTitle(todo.getTitle());
+        editForm.setDescription(todo.getDescription());
+        editForm.setPriority(todo.getPriority());
+        editForm.setDueDate(TodoDateTimes.utcToIst(todo.getDueDate()));
+        model.addAttribute("todo", editForm);
         return "edit_todo";
     }
 
     @PostMapping("/edit/{id}")
     public String updateTodo(@PathVariable Long id, @ModelAttribute("todo") Todos updatedTodo,
-                             @AuthenticationPrincipal UserDetails userDetails){
+                             Model model){
         Todos todo = todoRepository.findById(id).orElseThrow();
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+        User user = getAuthenticatedUser(model);
 
         if(!todo.getUser().getId().equals(user.getId())){
             return "redirect:/todos";
@@ -171,7 +175,11 @@ public class TodoController {
         todo.setTitle(updatedTodo.getTitle());
         todo.setDescription(updatedTodo.getDescription());
         todo.setPriority(updatedTodo.getPriority());
-        todo.setDueDate(updatedTodo.getDueDate());
+        var updatedDueDateUtc = TodoDateTimes.istToUtc(updatedTodo.getDueDate());
+        if (!Objects.equals(todo.getDueDate(), updatedDueDateUtc)) {
+            todo.setDueDate(updatedDueDateUtc);
+            todo.setReminderSent(false);
+        }
 
         todoRepository.save(todo);
         return "redirect:/todos";
@@ -179,23 +187,21 @@ public class TodoController {
 
     // Priority pages
     @GetMapping("/high")
-    public String highTodos(@AuthenticationPrincipal UserDetails userDetails, Model model){
-        return getPriorityTodos(userDetails, model, Priority.HIGH, "HIGH");
+    public String highTodos(Model model){
+        return getPriorityTodos(getAuthenticatedUser(model), model, Priority.HIGH, "HIGH");
     }
 
     @GetMapping("/medium")
-    public String mediumTodos(@AuthenticationPrincipal UserDetails userDetails, Model model){
-        return getPriorityTodos(userDetails, model, Priority.MEDIUM, "MEDIUM");
+    public String mediumTodos(Model model){
+        return getPriorityTodos(getAuthenticatedUser(model), model, Priority.MEDIUM, "MEDIUM");
     }
 
     @GetMapping("/low")
-    public String lowTodos(@AuthenticationPrincipal UserDetails userDetails, Model model){
-        return getPriorityTodos(userDetails, model, Priority.LOW, "LOW");
+    public String lowTodos(Model model){
+        return getPriorityTodos(getAuthenticatedUser(model), model, Priority.LOW, "LOW");
     }
 
-    private String getPriorityTodos(UserDetails userDetails, Model model, Priority priority, String pageName){
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+    private String getPriorityTodos(User user, Model model, Priority priority, String pageName){
         List<Todos> todos = todoRepository.findByUserAndPriorityAndCompletedFalse(user, priority);
         model.addAttribute("todos", todos);
         model.addAttribute("currentPage", pageName);
@@ -204,20 +210,34 @@ public class TodoController {
 
     // Completed todos (history)
     @GetMapping("/history")
-    public String completedTodos(@AuthenticationPrincipal UserDetails userDetails, Model model){
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+    public String completedTodos(Model model){
+        User user = getAuthenticatedUser(model);
         List<Todos> todos = todoRepository.findByUserAndCompletedTrue(user);
         model.addAttribute("todos", todos);
         model.addAttribute("currentPage", "HISTORY");
         return "history-todos";
     }
 
+    private User getAuthenticatedUser(Model model) {
+        Object user = model.asMap().get("currentUser");
+        if (user instanceof User authenticatedUser && authenticatedUser.getId() != null) {
+            return authenticatedUser;
+        }
+        throw new UsernameNotFoundException("Authenticated user not found");
+    }
+
+    private boolean belongsToUser(Todos todo, User user) {
+        return todo.getUser() != null && Objects.equals(todo.getUser().getId(), user.getId());
+    }
+
     // Update priority
     @PostMapping("/updatePriority/{id}")
-    public String updatePriority(@PathVariable Long id, @RequestParam String priorityStr){
+    public String updatePriority(@PathVariable Long id, @RequestParam String priorityStr, Model model){
         Todos todo = todoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Todo not found!"));
+        if (!belongsToUser(todo, getAuthenticatedUser(model))) {
+            return "redirect:/todos";
+        }
         Priority priority;
         try{
             priority = Priority.valueOf(priorityStr.toUpperCase());

@@ -1,5 +1,5 @@
 <!-- src/main/resources/templates/fragments/sidebar.html -->
-<aside th:fragment="sidebar">
+<aside th:if="${#authorization.expression('isAuthenticated()')}" th:fragment="sidebar">
     <div class="flex flex-col justify-between h-screen w-64 md:w-full lg:w-64 text-black bg-white border-r border-gray-300 shadow-lg">
         <div class="flex flex-col grow">
             <div class="flex justify-between items-center px-6 py-4 border-b border-gray-300">
@@ -60,7 +60,11 @@
         </div>
 
         <div class="px-6 py-4 border-t border-gray-300 bg-gray-50">
-            <p class="font-semibold mb-2 md:text-2xl lg:text-base" th:text="${#authentication.principal.username}">Username</p>
+            <p class="font-semibold mb-2 md:text-2xl lg:text-base" th:text="${(#authentication.principal != null && #authentication.principal != 'anonymousUser')
+                         ? #authentication.principal.username
+                         : 'Guest'}">
+                Guest
+            </p>
             <form th:action="@{/logout}" method="post">
                 <button type="submit" class="w-full bg-red-600 hover:bg-red-700 font-semibold text-white py-2 rounded md:text-2xl lg:text-base">Logout</button>
             </form>

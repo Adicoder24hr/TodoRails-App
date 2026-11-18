@@ -1,5 +1,6 @@
 <!-- src/main/resources/templates/fragments/mobile-nav.html -->
-<div th:fragment="mobileNav">
+<div th:fragment="mobileNav"
+     th:if="${#authentication.principal != null && #authentication.principal != 'anonymousUser'}">
   <nav class="flex justify-around items-center py-2 bg-white border-t border-gray-200 shadow-md">
     
     <a th:href="@{/todos/high}" 

@@ -3,7 +3,6 @@ package com.todoapp.todorails.controller;
 import com.todoapp.todorails.model.User;
 import com.todoapp.todorails.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,14 +31,8 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping
-    public String settingsPage(Authentication authentication, Model model) {
-        // ✅ FIX: redirect only if not authenticated
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
-        }
-
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).orElse(null);
+    public String settingsPage(Model model) {
+        User user = authenticatedUser(model);
         if (user == null) {
             return "redirect:/login";
         }
@@ -52,19 +45,13 @@ public class UserController {
     }
 
     @PostMapping("/updateProfile")
-    public String updateProfile(Authentication authentication,
-                                @RequestParam("username") String username,
+    public String updateProfile(@RequestParam("username") String username,
                                 @RequestParam(value = "password", required = false) String password,
                                 @RequestParam(value = "confirmPassword", required = false) String confirmPassword,
                                 @RequestParam(value = "profilePicture", required = false) MultipartFile file,
                                 Model model) throws IOException {
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
-        }
-
-        String currentUsername = authentication.getName();
-        User user = userRepository.findByUsername(currentUsername).orElse(null);
+        User user = authenticatedUser(model);
         if (user == null) {
             return "redirect:/login";
         }
@@ -118,5 +105,12 @@ public class UserController {
 
         // ✅ FIX: Redirect to /settings to force a fresh page load and update the topbar instantly
         return "redirect:/settings";
+    }
+
+    private User authenticatedUser(Model model) {
+        Object user = model.asMap().get("currentUser");
+        return user instanceof User authenticatedUser && authenticatedUser.getId() != null
+                ? authenticatedUser
+                : null;
     }
 }

@@ -1,29 +1,35 @@
 <div th:fragment="topbar">
-  <header class="bg-white shadow flex justify-center lg:justify-end px-6 py-4">
+  <header th:if="${#authentication.principal != null && #authentication.principal != 'anonymousUser'}"
+          class="bg-white shadow flex justify-center lg:justify-end px-6 py-4">
+
     <div class="flex items-center space-x-3 flex-col md:flex-col lg:flex-row">
 
       <!-- Avatar container -->
-      <div class="h-10 w-10 md:h-20 md:w-20 lg:h-10 lg:w-10 mr-0 lg:mr-2 rounded-full overflow-hidden bg-indigo-100 flex items-center justify-center shadow-sm relative">
+      <div class="h-10 w-10 md:h-20 md:w-20 lg:h-10 lg:w-10 mr-0 lg:mr-2 rounded-full overflow-hidden bg-indigo-100
+                  flex items-center justify-center shadow-sm relative">
 
-        <!-- Default avatar (always shown as base layer with username's first letter) -->
+        <!-- Default avatar -->
         <div class="h-full w-full bg-indigo-100 flex items-center justify-center absolute inset-0">
-          <span th:text="${user != null ? user.username.substring(0,1) : '?'}"
+          <span th:text="${(currentUser != null && currentUser.username != null)
+                          ? currentUser.username.substring(0,1).toUpperCase()
+                          : '?'}"
                 class="font-semibold text-indigo-700 text-lg uppercase"></span>
         </div>
 
-        <!-- Profile picture overlay (conditionally shown if path exists) -->
-        <img th:if="${user != null and user.profilePicturePath != null}"
-             th:src="@{${user.profilePicturePath}(t=${timestamp})}"
+        <!-- Profile picture -->
+        <img th:if="${currentUser != null && currentUser.profilePicturePath != null}"
+             th:src="@{${currentUser.profilePicturePath}(t=${timestamp})}"
              alt="Profile"
              class="h-full w-full object-cover absolute inset-0"
-             onerror="this.style.display='none';">
+             onerror="this.style.display='none';" />
 
       </div>
 
-      <!-- Display username or 'Unknown' -->
-      <span th:text="${user != null ? user.username : 'Unknown'}"
+      <!-- Username -->
+      <span th:text="${(currentUser != null && currentUser.username != null) ? currentUser.username : 'User'}"
             class="font-medium text-gray-700 text-base md:text-2xl lg:text-base"></span>
 
     </div>
+
   </header>
 </div>

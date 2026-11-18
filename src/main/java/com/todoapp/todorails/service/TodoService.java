@@ -6,6 +6,9 @@ import com.todoapp.todorails.repository.TodoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
+import com.todoapp.todorails.util.TodoDateTimes;
 
 @Service
 public class TodoService {
@@ -24,6 +27,9 @@ public class TodoService {
     // Add new todo for a user
     public void addTodoForUser(User user, Todos todo){
         todo.setUser(user);
+
+        todo.setDueDate(TodoDateTimes.istToUtc(todo.getDueDate()));
+
         todoRepository.save(todo);
     }
 
@@ -42,7 +48,8 @@ public class TodoService {
     // Delete todo by id
     public boolean deleteTodoByIdAndUser(Long id, User user) {
         return todoRepository.findById(id)
-                .filter(todo -> todo.getUser().equals(user))
+                .filter(todo -> todo.getUser() != null
+                        && Objects.equals(todo.getUser().getId(), user.getId()))
                 .map(todo -> {
                     todoRepository.delete(todo);
                     return true;

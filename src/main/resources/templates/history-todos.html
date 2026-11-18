@@ -20,7 +20,8 @@
     x-transition:leave-start="translate-x-0 opacity-100"
     x-transition:leave-end="-translate-x-full opacity-0"
     class="fixed inset-y-0 left-0 w-64 md:w-80 lg:w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
-    <div th:replace="fragments/sidebar :: sidebar"></div>
+    <div th:if="${#authorization.expression('isAuthenticated()')}"
+     th:replace="fragments/sidebar :: sidebar"></div>
 </div>
 
 <!-- Overlay -->
@@ -28,7 +29,7 @@
      class="fixed inset-0 bg-black bg-opacity-30 z-40 lg:hidden"></div>
 
 <!-- Topbar for mobile and tablet -->
-<header class="lg:hidden flex items-center justify-between bg-white shadow px-4 py-3">
+<header class="lg:hidden flex items-center justify-between bg-white shadow px-4 py-3 fixed top-0 w-full z-30">
     <button @click="sidebarOpen = true" class="md:h-10 md:w-10">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:w-full md:h-full text-gray-700" fill="none" viewBox="0 0 24 24"
              stroke="currentColor">
@@ -45,12 +46,13 @@
 
     <!-- Desktop Sidebar -->
     <div class="hidden lg:block fixed top-0 left-0 h-full w-64 z-40">
-        <div th:replace="fragments/sidebar :: sidebar"></div>
+        <div th:if="${#authorization.expression('isAuthenticated()')}"
+         th:replace="fragments/sidebar :: sidebar"></div>
     </div>
 
     <!-- Main Content -->
     <div class="flex-1 lg:ml-64 p-6 overflow-y-auto">
-        <div class="max-w-6xl mx-auto">
+        <div class="max-w-6xl mx-auto my-16 md:my-16 lg:my-0">
 
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-2xl font-bold md:text-3xl lg:text-2xl">Completed Todos</h1>
@@ -71,7 +73,9 @@
 
                     <h2 class="text-xl font-bold mb-2 md:text-2xl lg:text-xl" th:text="${todo.title}"></h2>
                     <p class="text-gray-700 mb-2 text-base md:text-lg lg:text-base" th:text="${todo.description}"></p>
-                    <p class="text-sm text-gray-500 mb-2 md:text-base lg:text-sm" th:text="'Due: ' + ${#temporals.format(todo.dueDate, 'dd MMM yyyy HH:mm')}"></p>
+                    <p th:if="${todo.dueDate != null}"
+                       class="text-sm text-gray-500 mb-2 md:text-base lg:text-sm"
+                       th:text="${'Due: ' + #temporals.format(T(com.todoapp.todorails.util.TodoDateTimes).utcToIst(todo.dueDate), 'dd MMM yyyy HH:mm')}"></p>
                     <p class="text-sm text-gray-500 mb-4 md:text-base lg:text-sm" th:text="'Priority: ' + ${todo.priority}"></p>
 
                     <div class="flex justify-between gap-5 md:gap-0">

@@ -22,7 +22,8 @@
     x-transition:leave-start="translate-x-0 opacity-100"
     x-transition:leave-end="-translate-x-full opacity-0"
     class="fixed inset-y-0 left-0 w-64 md:w-80 lg:w-64 bg-white shadow-lg z-50 lg:hidden overflow-y-auto">
-    <div th:replace="fragments/sidebar :: sidebar"></div>
+    <div th:if="${#authorization.expression('isAuthenticated()')}"
+     th:replace="fragments/sidebar :: sidebar"></div>
   </div>
 
   <!-- ✅ Overlay -->
@@ -44,7 +45,8 @@
 
   <!-- ✅ Sidebar for Desktop -->
   <div class="hidden lg:block fixed top-0 left-0 h-full w-64 z-40">
-    <div th:replace="fragments/sidebar :: sidebar"></div>
+    <div th:if="${#authorization.expression('isAuthenticated()')}"
+     th:replace="fragments/sidebar :: sidebar"></div>
   </div>
 
   <!-- ✅ Main content -->
